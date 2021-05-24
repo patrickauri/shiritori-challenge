@@ -1,25 +1,64 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react"
+import Landing from "./components/Landing"
+import { ComputerMatch } from "./components/Match"
+import "./style.css"
 
-function App() {
+const App = () => {
+  const LoadingState = {
+    PRE: 0,
+    LOADING: 1,
+    POST: 2,
+  }
+  Object.freeze(LoadingState)
+
+  const [loading, setLoading] = useState(LoadingState.PRE)
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const changePage = (newPage) => {
+    setLoading(LoadingState.PRE)
+    setLoading(LoadingState.LOADING)
+    setTimeout(() => {
+      setCurrentPage(newPage)
+      setLoading(LoadingState.POST)
+    }, 2000)
+  }
+
+  const RenderPage = () => {
+    switch (currentPage) {
+      case 0:
+        // Landing Page
+        return <Landing changePage={changePage} />
+      case 1:
+        // Player vs Computer
+        return <ComputerMatch />
+      default:
+        return
+    }
+  }
+
+  const GetLoadingStyle = () => {
+    switch (loading) {
+      case LoadingState.PRE:
+        return "pre"
+      case LoadingState.LOADING:
+        return "during"
+      case LoadingState.POST:
+        return "post"
+      default:
+        return "NULL"
+    }
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <>
+      <div className={"fade-" + GetLoadingStyle()}>
+        <div className="loading-text">
+          <h1>Loading</h1>
+        </div>
+      </div>
+      <RenderPage />
+    </>
+  )
 }
 
-export default App;
+export default App
